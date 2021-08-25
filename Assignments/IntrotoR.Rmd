@@ -1,0 +1,147 @@
+---
+title: "Intro to R"
+output: html_notebook
+---
+
+
+```{r}
+```
+```{r}
+
+```
+
+
+```{r calculator}
+ log(2)
+log(4)
+1+2
+6^3
+```
+
+```{r}
+x<-4
+```
+
+
+```{r}
+x
+```
+```{r}
+print(x)
+```
+
+```{r}
+z <- "Wake up Neo"
+z
+```
+
+```{r}
+x <- "Wake up Neo"
+z<-4
+x
+z
+```
+
+```{r}
+x<-5
+y<-2
+z1<-x*y
+z2<-x/y  
+z3<-x^y 
+z2
+z3
+```
+
+```{r}
+x<-3
+y<-(x+2*sqrt(x))/(x+5*sqrt(x))
+y
+```
+```{r}
+help.search("log")
+```
+
+```{r}
+z <- "Wake up Neo" 
+z1 <- c("W","a","k","e","u","p","N","e","o") 
+z2 <- c("Wake up Neo")
+z3<-c("Wake", "up", "Neo")
+z
+z1
+z2
+z3
+```
+
+```{r}
+#Method 1
+x<-1:20
+length(x)
+print(x)
+#Method 2
+x<-seq(1,20,length=20)
+length(x)
+print(x)
+x<-seq(21,40,length=20)
+length(x)
+print(x)
+x<-seq(1,40,length=20)
+length(x)
+print(x)
+#Method 3
+x<-c(1, 2, 3, 4, 5, 6, 7, 8, 9,10,11,12,13,14,15,16, 17,18,19,20)
+length(x)
+print(x)
+```
+```{r}
+x[1:3]      # 1:3 is a shortcut for c(1,2,3)
+x[c(2,4,9)]
+```
+
+```{r}
+length(x)
+```
+```{r}
+x[length(x)]
+```
+
+
+```{r}
+ x < 25
+```
+
+```{r}
+x[x < 25]
+#or#
+x[x > 25]
+#or#
+x[x != 25] #note here I am using != to mean "not equal" to 10
+x[x == 25] #note here I am using == to mean "is exactly equal" to 10
+```
+```{r}
+y<-seq(2,40,length=length(x))
+z <- x * y
+z
+z1 <- y - 2 * x
+z1
+#note that the 5th element seems out of place in these if you did not change the conversion of that value to zero above in your vector x.
+```
+```{r}
+z <- x >= y              # >= is greater than or equal to
+z
+z <- x[abs(x) <= abs(y)]  # absolute values
+z
+```
+```{r}
+x
+z <- 2 * x
+z
+y<-c(2,1)
+z<-y*x
+z
+```
+
+
+
+
+
+
