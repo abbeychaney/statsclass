@@ -1,0 +1,541 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+```{r}
+mydata <- read.csv(choose.files(), stringsAsFactors = FALSE)
+```
+
+```{r}
+mydata <- read.csv("./data/mammals.csv", header = T, stringsAsFactors = FALSE)
+
+```
+
+
+```{r}
+
+print(mydata, n=5) # print the first 5 rows
+
+```
+
+
+```{r}
+
+names(mydata)
+```
+
+
+```{r}
+head(mydata)
+```
+
+```{r}
+View(mydata)
+```
+
+```{r}
+levels(factor(mydata$continent))
+```
+
+
+```{r}
+mydata <- read.csv("./data/mammals.csv", stringsAsFactors = FALSE, strip.white = TRUE, na.strings = c("") )
+
+```
+
+```{r}
+levels(factor(mydata$continent))
+```
+
+```{r}
+str(mydata)                     # summary of variables in frame
+is.data.frame(mydata)           # TRUE or FALSE
+ncol(mydata)                    # number of columns in data
+nrow(mydata)                    # number of rows
+names(mydata)                   # variable names
+rownames(mydata)                # row names
+```
+
+
+```{r}
+str(mydata)            # Base R structure
+glimpse(mydata)        # command from dplyr package
+```
+
+
+```{r}
+library(dplyr)
+library(ggplot2)
+str(diamonds)
+head(diamonds)
+```
+
+```{r}
+idl.diamonds=filter(diamonds,cut=="Ideal")
+idl.diamonds
+```
+
+
+```{r}
+sub.diamonds=select(idl.diamonds, carat, cut, color, price, clarity)
+```
+
+
+```{r}
+price.per=mutate(sub.diamonds,price_per=price/carat)
+price.per
+```
+
+```{r}
+scramble=data.frame(num_var = c(2,3,5,1,4))
+arrange(scramble,num_var)
+arrange(scramble,desc(num_var))
+```
+
+
+```{r}
+summarize(sub.diamonds, avg_price = mean(price, na.rm = TRUE))
+```
+
+
+```{r}
+head(diamonds)
+d1=group_by(diamonds,cut,color)
+summarize(d1, avg_price = mean(price, na.rm = TRUE),sd.price=sd(price,na.rm=TRUE))
+```
+
+```{r}
+final.diamonds= diamonds %>%
+                filter(cut=="Ideal") %>%
+                select(carat, cut, color, price, clarity) %>%
+                mutate(price_per_carat = price/carat)
+```
+
+```{r}
+  diamonds %>%                                        # Start with the 'diamonds' dataset
+  filter(cut == "Ideal") %>%                        # Then, filter down to rows where cut == Ideal
+  ggplot(aes(x=color,y=price)) +                     # Then, plot using ggplot
+  geom_boxplot()      
+diamonds %>%                                        # Start with the 'diamonds' dataset
+  filter(cut == "Premium") %>%                        # Then, filter down to rows where cut == Ideal
+  ggplot(aes(x=carat,y=price)) +                     # Then, plot using ggplot
+  geom_point()
+```
+
+
+```{r}
+diamonds %>%                                        # Start with the 'diamonds' dataset
+  filter(cut == "Ideal") %>%                        # Then, filter down to rows where cut == Ideal
+  ggplot(aes(price)) +                            # Then, plot using ggplot
+    geom_histogram() +                              # and plot histograms
+    facet_wrap(~ color)                             # in a 'small multiple' plot, broken out by 'color'
+```
+
+```{r}
+wide <- read.table(header=TRUE, text='
+ subject sex control cond1 cond2
+       1   M     7.9  12.3  10.7
+       2   F     6.3  10.6  11.1
+       3   F     9.5  13.1  13.8
+       4   M    11.5  13.4  12.9
+')
+# Make sure the subject column is a factor
+wide$subject <- factor(wide$subject)
+str(wide)
+wide
+```
+
+
+```{r}
+long <- read.table(header=TRUE, text='
+ subject sex condition measurement
+       1   M   control         7.9
+       1   M     cond1        12.3
+       1   M     cond2        10.7
+       2   F   control         6.3
+       2   F     cond1        10.6
+       2   F     cond2        11.1
+       3   F   control         9.5
+       3   F     cond1        13.1
+       3   F     cond2        13.8
+       4   M   control        11.5
+       4   M     cond1        13.4
+       4   M     cond2        12.9
+')
+# Make sure the subject column is a factor
+long$subject <- factor(long$subject)
+str(long)
+```
+
+```{r}
+require(tidyr)
+wide_to_long <- gather(wide, condition, measurement, control:cond2, factor_key=TRUE)
+wide_to_long
+```
+
+```{r}
+wide_to_long <- gather(wide, condition, measurement, control, cond1, cond2, factor_key=TRUE)
+wide_to_long
+```
+
+
+```{r}
+keycol <- "condition"
+valuecol <- "measurement"
+gathercols <- c("control", "cond1", "cond2")
+gather_(wide, keycol, valuecol, gathercols)
+```
+
+
+```{r}
+long_to_wide <- spread(wide_to_long, condition, measurement)
+long_to_wide
+```
+
+```{r}
+mydata$logsize <- log(mydata$mass.grams)            # base R
+str(mydata)
+mydata <- mutate(mydata, log10size = log10(mass.grams)) # using the dplyr package
+str(mydata)
+```
+
+```{r}
+mydata$species <- NULL # Base R -- NULL must be upper case
+mydata <- select(mydata, -species) # dplyr method
+```
+
+```{r}
+mydata$genus <- NULL # Base R -- NULL must be upper case
+mydata <- select(mydata, -genus) # dplyr method
+```
+
+```{r}
+newdata <- mydata[ , c(2,3)]   # all rows, columns 2 and 3 only;
+newdata <- mydata[ , -1]       # all rows, leave out first column
+newdata <- mydata[1:3, 1:2]    # first three rows, first two columns
+```
+
+```{r}
+newdata <- mydata[ , c(2,3)]
+newdata
+```
+
+```{r}
+newdata <- mydata[mydata$continent == "AF" & mydata$logsize < 25,  c("continent","status","order")]
+newdata
+```
+
+```{r}
+newdata <- subset(mydata, continent == "AF" & mass.grams < 25, select = c(continent,status,order))
+newdata
+```
+
+
+```{r}
+# extract rows
+locations <- filter(mydata, continent == "AF")
+# extract columns
+newdata <- select(mydata, continent,status,order) 
+newdata
+
+```
+
+
+
+```{r}
+mydata.x <- mydata[order(mydata$x), ]  # base R
+
+mydata.x
+```
+
+
+BASIC PLOTTING TUTORIAL
+
+```{r}
+p=ggplot(diamonds,aes(x=carat,y=price))
+p1=p+geom_point(aes(shape=color))+geom_smooth(aes(x=carat,y=price))
+p1
+```
+
+
+```{r}
+p2=p1+labs(title="Scatter Plot",x="Carat",y="Price")
+print(p2)
+```
+
+```{r}
+p3=p2+theme(plot.title=element_text(size=40,face="italic"),
+            axis.text.y=element_text(size=12),axis.text.x=element_text(size=12),
+            axis.title.y=element_text(size=20),axis.title.x=element_text(size=20))
+print(p3)
+```
+
+```{r}
+p3+facet_wrap(~cut)+labs(shape="Hue")
+
+```
+
+
+```{r}
+head(mydata)
+```
+```{r}
+levels(factor(mydata$continent))
+```
+
+```{r}
+# Number of mammal species on each continent
+table(mydata$continent)
+```
+
+```{r}
+mammals <- mydata
+```
+
+```{r}
+# Number of mammal species on each continent
+table(mammals$continent)
+```
+
+```{r}
+# Fix "Af"
+which(mammals$continent=="Af") #identifies which entry is wrong
+```
+
+```{r}
+mammals$continent[322]<-"AF"
+table(mammals$continent)
+```
+
+CHALLENGE QUESTION 1
+
+How many extinct mammals are recorded in the data file? Use a frequency table to find out.
+```{r}
+table(mammals$status)
+```
+
+Extinct: 242
+
+
+
+Create a two-way frequency table (contingency table) showing the status of mammal species on each continent.
+Judging by eye, which continent has the greatest number of extinctions relative to the number of extant species?
+
+```{r}
+table(mammals$status,mammals$continent)
+
+```
+AUS has the most extinctions relative to extant species
+
+```{r}
+# Load the packages you might need
+library(ggplot2, warn.conflicts=FALSE)
+```
+
+```{r}
+# Histogram of mammal species by continent
+ggplot(mammals, aes(x=continent)) + 
+  geom_bar(stat="count", fill = "firebrick") +
+  labs(x = "Continent", y = "Frequency") +
+  theme_classic()
+```
+
+CHALLENGE QUESTION 2
+
+The plot categories are listed in alphabetical order by default, which is arbitrary and makes the visual display less efficient than other possibilities. Redo the bar graph with the continents appearing in order of decreasing numbers of species.
+```{r}
+ggplot(mammals, aes(x=reorder(continent, length(continent))) + 
+  geom_bar(stat="count", fill = "firebrick") +
+  labs(x = "Continent", y = "Frequency") +
+  theme_classic()
+```
+
+
+
+
+```{r}
+# Histogram of mammal species by continent
+ggplot(mammals, aes(x=reorder(x=continent, X= continent, FUN = function(x) -length(x)))) + 
+  geom_bar(stat="count", fill = "firebrick") +
+  labs(x = "Continent", y = "Frequency") +
+  theme_classic()
+```
+
+
+Create a new variable in the mammal data frame: the log (base 10) of body mass. 
+```{r}
+# Add a new variable, log10 of body mass
+mammals$logmass <- log10(mammals$mass.grams)
+logmass <- mammals$logmass
+logmass
+```
+
+Generate a histogram of log body mass. Morphological data commonly require a log-transformation to analyze.
+
+```{r}
+ggplot(data=mammals, aes(logmass)) + 
+  geom_histogram()
+```
+
+Redo the previous histogram but use a bin width of 2 units (Use your help functions to figure out how to do this). How much detail is lost?
+```{r}
+ggplot(data=mammals, aes(logmass)) + 
+  geom_histogram(binwidth = 2)
+```
+
+Redo the histogram but try a bin width of of 1; then try 0.5; and then 0.1. Which bin width is superior?
+```{r}
+ggplot(data=mammals, aes(logmass)) + 
+  geom_histogram(binwidth = 1)
+```
+
+```{r}
+ggplot(data=mammals, aes(logmass)) + 
+  geom_histogram(binwidth = 0.5)
+```
+
+```{r}
+ggplot(data=mammals, aes(logmass)) + 
+  geom_histogram(binwidth = 0.1)
+```
+
+
+Both the 0.5 and 0.1 binwidth give a better visual of the distribution of mass.
+I think the 0.1 binwidth is the best becuase it is easy to see the variety
+of log(mass) in the data.
+
+Redo the histogram, but display probability density instead of frequency.
+```{r}
+ggplot(data=mammals, aes(logmass)) + 
+  geom_density()
+```
+
+#####################
+
+```{r}
+x<- read.csv("./data/fruitflies.csv",na.strings="",stringsAsFactors =FALSE)
+head(x)
+```
+
+```{r}
+# Strip chart using ggplot
+ggplot(x, aes(x=treatment, y=longevity.days)) +
+  geom_point(color = "firebrick", size = 3, width = 0.15) +
+  labs(x = "Treatment", y = "Longevity (days)") + 
+  theme_classic()
+```
+
+```{r}
+# Strip chart using ggplot
+ggplot(x, aes(x=treatment, y=longevity.days)) +
+  geom_jitter(color = "firebrick", size = 2, width = 0.15) +
+  labs(x = "Treatment", y = "Longevity (days)") + 
+  theme_classic()
+```
+
+Can see that males with 8 virgin females tend to have the shortest longevity
+
+```{r}
+# Box plot using ggplot
+ggplot(x, aes(x=treatment, y=longevity.days)) +
+  geom_boxplot(fill = "goldenrod1", width = 0.5) +
+  labs(x = "Treatment", y = "Longevity (days)") + 
+  theme_classic()
+```
+  
+Yes, the same general pattern is revealed, but it is much easier to see the mean and spread
+
+```{r}
+# Scatter plot with ggplot
+ggplot(x, aes(x = thorax.mm, y = longevity.days)) + 
+    geom_point(size = 3, col = "firebrick") + 
+    labs(x = "Thorax length (mm)", y = "Longevity (days)") + 
+    theme_classic()
+```
+
+General trend of longer thorax length as longevity increases
+
+```{r}
+# Scatter plot with separate colors for each group using ggplot
+ggplot(x, aes(x = thorax.mm, y = longevity.days, colour = treatment, 
+            shape = treatment)) + 
+    geom_point(size = 2) + 
+    labs(x = "Thorax length (mm)", y = "Longevity (days)") + 
+    theme_classic()
+```
+
+It is very difficult to see patterns in treatments because the symbols are all mixed together,
+can see that the males with 8 virgin females have lowest longevity
+
+```{r}
+ggplot(x, aes(x=thorax.mm, y=longevity.days, colour = treatment, 
+            shape = treatment)) + 
+    geom_point(size = 2) +
+    geom_smooth(method = lm, size = 1, se = FALSE) +
+    labs(x = "Thorax length (mm)", y = "Longevity (days)") + 
+    theme_classic()
+```
+This graph makes patterns much easier to see.  Can tell that males with 8 pregnant females
+have the longest longevity in relation to body size and males with 8 virgin females have the
+shortest longevity in relation to body size.
+
+
+
+
+
+
+CHALLENGE SET 3
+
+To analyze these data in R, first enter them as numerical vectors using either the command as.vector or c (concatenate): 
+
+```{r}
+Light=c(20,20,20,20,21,24,44,60,90,94,101)
+rmax=c(1.73,1.65,2.02,1.89,2.61,1.36,2.37,2.08,2.69,2.32,3.67)
+```
+
+```{r}
+growth <- data.frame(
+Light=c(20,20,20,20,21,24,44,60,90,94,101) ,  
+  rmax=c(1.73,1.65,2.02,1.89,2.61,1.36,2.37,2.08,2.69,2.32,3.67)
+  )
+```
+
+
+The function c combines the individual numbers into a vector.
+
+Draw an informative histogram of the growth rates.
+```{r}
+ggplot(growth, aes(rmax)) + geom_histogram(binwidth = 1) + 
+    labs(x = "Maximum Growth Rate", y = "Frequency")
+```
+Now investigate how light intensity affects algal rate of increase, 
+
+```{r}
+ggplot(growth, aes(x = rmax, y = Light)) + geom_point()+ 
+    labs(x = "Maximum Growth Rate", y = "Light Intensity")
+
+```
+
+
+Change the color and point types and redraw.
+
+```{r}
+ggplot(growth, aes(x = rmax, y = Light,)) + geom_point(size = 4, color = "turquoise", shape = 17)+ labs(x = "Maximum Growth Rate", y = "Light Intensity")
+```
+
+Add a best fit line and error envelope to the plot.
+
+```{r}
+ggplot(growth, aes(x = rmax, y = Light,)) + geom_point(size = 4, color = "turquoise", shape = 17)  + geom_smooth(method = lm, size = 1, color = "black")+  labs(x = "Maximum Growth Rate", y = "Light Intensity")
+```
+
+
+
+
+
+
+
+
+
+
